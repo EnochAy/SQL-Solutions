@@ -4,8 +4,6 @@ Account Inactivity Alert
     It calculates the total deposits made by each customer and orders the results by total deposits in descending order.
 */
 
-
-
 -- Find accounts (savings or investment) with no transaction in last 365 days
 WITH last_txn_dates AS (
     SELECT
