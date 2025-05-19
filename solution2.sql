@@ -1,3 +1,10 @@
+
+/* Assessment_Q2.sql
+Transaction Frequency Analysis
+    This SQL query retrieves a list of customers who have both funded savings accounts and investment plans.
+    It calculates the total deposits made by each customer and orders the results by total deposits in descending order.
+*/
+
 -- Classify customers based on transaction frequency
 WITH txn_counts AS (
     SELECT
