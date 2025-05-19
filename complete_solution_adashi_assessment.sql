@@ -123,8 +123,6 @@ Customer Lifetime Value (CLV) Estimation
     It calculates the total deposits made by each customer and orders the results by total deposits in descending order.
 */
 
-
-
 -- Estimate CLV based on transaction volume and tenure
 WITH user_txns AS (
     SELECT
