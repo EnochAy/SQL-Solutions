@@ -27,3 +27,4 @@ WHERE
     )
 GROUP BY u.id, u.first_name, u.last_name
 ORDER BY total_deposits DESC;
+
