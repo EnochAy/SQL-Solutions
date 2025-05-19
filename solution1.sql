@@ -28,28 +28,5 @@ WHERE
 GROUP BY u.id, u.first_name, u.last_name
 ORDER BY total_deposits DESC;
 
-/* Assessment_Q1.sql
-High-Value Customers with Multiple Products
-    This SQL query retrieves a list of customers who have both funded savings accounts and investment plans.
-    It calculates the total deposits made by each customer and orders the results by total deposits in descending order.
-*/
-SELECT
-    u.id AS owner_id,
-    CONCAT(u.first_name, ' ', u.last_name) AS name,
-    COUNT(DISTINCT s.id) AS savings_count,
-    COUNT(DISTINCT p.id) AS investment_count,
-    ROUND(SUM(s.confirmed_amount) / 100.0, 2) AS total_deposits
-FROM
-    users_customuser u
-INNER JOIN plans_plan p ON p.owner_id = u.id AND p.plan_type_id = 1 AND p.amount > 0
-INNER JOIN savings_savingsaccount s ON s.savings_id = p.id AND s.confirmed_amount > 0
-GROUP BY u.id, u.first_name, u.last_name
-HAVING
-    COUNT(DISTINCT s.id) > 0 AND COUNT(DISTINCT p.id) > 0
-ORDER BY total_deposits DESC;
 
 
-SHOW TABLES;
-SELECT COUNT(*) FROM users_customuser;
-SELECT COUNT(*) FROM savings_savingsaccount;
-SELECT COUNT(*) FROM plans_plan;
