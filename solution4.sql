@@ -9,17 +9,19 @@ Customer Lifetime Value (CLV) Estimation
 -- Estimate CLV based on transaction volume and tenure
 WITH user_txns AS (
     SELECT
-        owner_id,
+        s.savings_id AS plan_id,
+        p.owner_id,
         COUNT(*) AS total_transactions,
-        SUM(confirmed_amount) AS total_value
-    FROM savings_savingsaccount
-    GROUP BY owner_id
+        SUM(s.confirmed_amount) AS total_value
+    FROM savings_savingsaccount s
+    JOIN plans_plan p ON s.savings_id = p.id
+    GROUP BY s.savings_id, p.owner_id
 ),
 tenure_calc AS (
     SELECT
         id AS customer_id,
         CONCAT(first_name, ' ', last_name) AS name,
-        DATE_PART('month', AGE(CURRENT_DATE, date_joined)) AS tenure_months
+        TIMESTAMPDIFF(MONTH, date_joined, CURDATE()) AS tenure_months
     FROM users_customuser
 ),
 clv_calc AS (
@@ -29,7 +31,7 @@ clv_calc AS (
         t.tenure_months,
         COALESCE(u.total_transactions, 0) AS total_transactions,
         ROUND(
-            (COALESCE(u.total_transactions::numeric / NULLIF(t.tenure_months, 0), 0)) * 12 * 
+            (COALESCE(u.total_transactions / NULLIF(t.tenure_months, 0), 0)) * 12 * 
             (COALESCE(u.total_value, 0) * 0.001 / NULLIF(u.total_transactions, 0)),
             2
         ) AS estimated_clv
@@ -38,4 +40,5 @@ clv_calc AS (
 )
 SELECT * 
 FROM clv_calc
+WHERE estimated_clv IS NOT NULL
 ORDER BY estimated_clv DESC;
