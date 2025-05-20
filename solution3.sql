@@ -8,21 +8,19 @@ Account Inactivity Alert
 WITH last_txn_dates AS (
     SELECT
         id AS plan_id,
-        owner_id,
+        savings_id AS owner_id,
         'Savings' AS type,
         MAX(transaction_date) AS last_transaction_date
     FROM savings_savingsaccount
-    GROUP BY id, owner_id
-
+    GROUP BY id, savings_id
     UNION
-
     SELECT
         id AS plan_id,
         owner_id,
         'Investment' AS type,
-        MAX(transaction_date) AS last_transaction_date
+        MAX(last_charge_date) AS last_transaction_date
     FROM plans_plan
-    WHERE is_a_fund = 1
+    WHERE plan_type_id = 1
     GROUP BY id, owner_id
 )
 SELECT
@@ -30,7 +28,7 @@ SELECT
     owner_id,
     type,
     last_transaction_date,
-    DATE_PART('day', CURRENT_DATE - last_transaction_date)::int AS inactivity_days
+    DATEDIFF(CURDATE(), last_transaction_date) AS inactivity_days
 FROM last_txn_dates
-WHERE last_transaction_date < CURRENT_DATE - INTERVAL '365 days'
+WHERE last_transaction_date < DATE_SUB(CURDATE(), INTERVAL 365 DAY)
 ORDER BY inactivity_days DESC;

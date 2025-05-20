@@ -8,12 +8,12 @@ Transaction Frequency Analysis
 -- Classify customers based on transaction frequency
 WITH txn_counts AS (
     SELECT
-        owner_id,
-        DATE_TRUNC('month', transaction_date) AS txn_month,
+        savings_id AS owner_id,
+        DATE_FORMAT(transaction_date, '%Y-%m-01') AS txn_month,
         COUNT(*) AS monthly_txn
     FROM
         savings_savingsaccount
-    GROUP BY owner_id, txn_month
+    GROUP BY savings_id, DATE_FORMAT(transaction_date, '%Y-%m-01')
 ),
 monthly_avg AS (
     SELECT
